@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, defineProps } from 'vue';
+import { ref, watch, defineProps, defineEmits } from 'vue';
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
@@ -9,6 +9,7 @@ const props = defineProps({
   onClose: Function,
   projectId: String,
 });
+const emit = defineEmits(['taskUpdated']);
 
 const taskName = ref('');
 const taskAuthor = ref('');
@@ -63,6 +64,7 @@ const updateTask = async () => {
       assignee: taskAssignee.value,
       description: taskDescription.value,
     });
+    emit('taskUpdated');
     props.onClose();
   } catch (error) {
     console.error('Failed to update task', error);

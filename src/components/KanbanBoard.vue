@@ -40,6 +40,9 @@ const closeTaskModal = () => {
   selectedTask.value = null;
 };
 
+const handleTaskUpdated = () => {
+  fetchData();
+};
 
 watch(() => props.projectId, () => {
   if (typeof(props.projectId) !== 'undefined') {
@@ -77,6 +80,6 @@ watch(() => props.projectId, () => {
           </div>
         </div>
       </div>
-      <TaskDetailsModal v-if="showModal" :task="selectedTask" :showModal="showModal" :onClose="closeTaskModal" />
+      <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated":showModal="showModal" :onClose="closeTaskModal" /> 
   </div>
 </template>
