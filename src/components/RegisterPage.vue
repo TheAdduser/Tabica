@@ -12,6 +12,8 @@ const password = ref('');
 const passwordConfirm = ref('');
 const errorMessage = ref('');
 
+const defaultAvatarUrl = new URL('../assets/default-avatar.png', import.meta.url).href; 
+
 const register = async () => {
   if (password.value !== passwordConfirm.value) {
     errorMessage.value = 'Passwords do not match';
@@ -19,14 +21,22 @@ const register = async () => {
   }
 
   try {
-    await pb.collection('users').create({
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      passwordConfirm: password.value,
-    });
+    // Fetch the default avatar file
+    const response = await fetch(defaultAvatarUrl);
+    const blob = await response.blob();
+    const file = new File([blob], 'default-avatar.png', { type: blob.type });
+
+    // Create a FormData object
+    const formData = new FormData();
+    formData.append('name', name.value);
+    formData.append('email', email.value);
+    formData.append('password', password.value);
+    formData.append('passwordConfirm', password.value);
+    formData.append('avatar', file);
+
+    // Create the user with the FormData object
+    await pb.collection('users').create(formData);
     errorMessage.value = '';
-    // Redirect to the login page after successful registration
     router.push('/login');
   } catch (error) {
     errorMessage.value = 'Registration failed';
