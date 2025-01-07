@@ -47,21 +47,21 @@ watch(() => props.projectId, () => {
   if (typeof props.projectId !== 'undefined') {
     fetchData();
   }
-});
+}, { immediate: true });
 
 </script>
 
 <template>
-  <div class="p-5">
+  <div class="p-3">
     <div v-if="errorMessage" class="p-2 text-red-600 bg-red-100 rounded">
       {{ errorMessage }}
     </div>
     <div class="space-x-4 max-w-[calc(100vw)]">
-      <div class="flex gap-6 min-h-[calc(100vh-2rem)]" v-if="columns.length != 0">
+      <div class="flex min-h-[calc(100vh-2rem)]" v-if="columns.length != 0">
         <div
           v-for="column in columns"
           :key="column.id"
-          class="p-4 bg-gray-800 rounded-lg shadow-md min-w-44 max-w-44"
+          class="p-4 m-2 bg-gray-800 rounded-lg shadow-md min-w-44 max-w-44"
         >
           <h3 class="text-xl font-bold text-white">{{ column.name }}</h3>
           <div class="space-y-2 mt-4">
@@ -73,7 +73,7 @@ watch(() => props.projectId, () => {
             >
               {{ task.name }}
               <div class="absolute bottom-2 right-2 flex items-center space-x-2">
-                <i v-if="task.priority === 'Low'" class="fas fa-arrow-down text-green-500"></i>
+                <i v-if="task.priority === 'Low'" class="fas fa-arrow-down text-blue-500"></i>
                 <i v-if="task.priority === 'Medium'" class="fas fa-equals text-yellow-500"></i>
                 <i v-if="task.priority === 'High'" class="fas fa-arrow-up text-red-500"></i>
                 <img v-if="task.assignedUser" :src="`http://127.0.0.1:8090/api/files/users/${task.assignedUser.id}/${task.assignedUser.avatar}`" alt="Avatar" class="w-6 h-6 rounded-full" />
@@ -81,6 +81,7 @@ watch(() => props.projectId, () => {
             </div>
           </div>
         </div>
+        <div class="w-full"> </div>
       </div>
     </div>
 

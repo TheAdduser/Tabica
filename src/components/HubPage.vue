@@ -10,7 +10,7 @@ const projectId = ref(route.params.id);
 
 watch(() => route.params.id, (newId) => {
   projectId.value = newId;
-});
+}, { immediate: true });
 </script>
 
 <template>
