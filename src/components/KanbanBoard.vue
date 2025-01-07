@@ -18,12 +18,11 @@ const selectedTask = ref(null);
 const fetchData = async () => {
   try {
     const project = await pb.collection('projects').getOne(props.projectId, {
-      expand: 'column.task',
+      expand: 'column.task.assignee',
     });
 
     columns.value = project.expand.column.sort((a, b) => a.columnOrder - b.columnOrder);
     tasks.value = project.expand.column.flatMap(column => column.expand.task);
-    console.log('Fetched columns:', columns.value);
   } catch (error) {
     errorMessage.value = 'Failed to fetch columns';
   }
@@ -85,6 +84,6 @@ watch(() => props.projectId, () => {
       </div>
     </div>
 
-    <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated" :showModal="showModal" :onClose="closeTaskModal" />
+    <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated" :showModal="showModal" :projectId="projectId" :onClose="closeTaskModal" />
   </div>
 </template>

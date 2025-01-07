@@ -9,49 +9,30 @@ const props = defineProps({
   onClose: Function,
   projectId: String,
 });
-const emit = defineEmits(['taskUpdated']);
 
+const emit = defineEmits(['taskUpdated']);
 const taskName = ref('');
 const taskAuthor = ref('');
 const taskPriority = ref('');
 const taskAssignee = ref('');
+let projectAssignee = ref([]);
 const taskDescription = ref('');
-const users = ref([]);
-
-const fetchUsers = async () => {
-  try {
-    users.value = await pb.collection('users').getFullList({
-      filter: `projects ~ "${props.projectId}"`,
-    });
-  } catch (error) {
-    console.error('Failed to fetch users', error);
-  }
-};
 
 watch(
   () => props.task,
   async (Task) => {
     if (Task) {
       const author = await pb.collection('users').getOne(Task.author);
-     // const assignee = await pb.collection('users').getOne(Task.assignee);
-
+      projectAssignee = await pb.collection('projects').getOne(props.projectId, {     
+      expand: 'assignee',
+      });
       taskName.value = Task.name;
       taskAuthor.value = author.name;
       taskPriority.value = Task.priority;
-     // taskAssignee.value = assignee.name;
+      taskAssignee.value = Task.expand.assignee.id;
       taskDescription.value = Task.description;
-      console.log('Task:', Task);
     }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => props.projectId,
-  (newProjectId) => {
-    if (newProjectId) {
-      fetchUsers();
-    }
+    console.log(projectAssignee);
   },
   { immediate: true }
 );
@@ -94,8 +75,8 @@ const updateTask = async () => {
       </div>
       <div class="mb-4">
         <label for="taskAssignee" class="block mb-2 text-sm font-bold text-white">Assigned User</label>
-        <select v-model="taskAssignee" id="taskAssignee" class="w-full text-white px-3 py-2 border rounded bg-gray-600">
-         <!-- <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>-->
+        <select v-model="taskAssignee" id="taskAssignee" placeholder="test" class="w-full text-white px-3 py-2 border rounded bg-gray-600">
+          <option v-for="user in projectAssignee.expand.assignee" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
         </select>
       </div>
       <div class="mb-4">
