@@ -1,18 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import PocketBase from 'pocketbase';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 const router = useRouter();
+const route = useRoute();
 
 const projects = ref([]);
 const errorMessage = ref('');
+const selectedProjectId = ref(route.params.id);
 
 const fetchProjects = async () => {
   try {
-    projects.value = await pb.collection('projects').getFullList({
-    });
+    projects.value = await pb.collection('projects').getFullList();
   } catch (error) {
     errorMessage.value = 'Failed to fetch projects';
   }
@@ -20,7 +21,12 @@ const fetchProjects = async () => {
 
 const navigateToProjectHub = (projectId) => {
   router.push(`/hub/${projectId}`);
+  selectedProjectId.value = projectId;
 };
+
+watch(() => route.params.id, (newId) => {
+  selectedProjectId.value = newId;
+});
 
 onMounted(() => {
   fetchProjects();
@@ -34,7 +40,17 @@ onMounted(() => {
       {{ errorMessage }}
     </div>
     <ul class="space-y-2">
-      <li v-for="project in projects" :key="project.id" class="text-white hover:bg-gray-600 p-2 rounded cursor-pointer truncate" @click="navigateToProjectHub(project.id)">
+      <li
+        v-for="project in projects"
+        :key="project.id"
+        :class="{
+          'bg-gray-600': project.id === selectedProjectId,
+          'hover:bg-gray-600': project.id !== selectedProjectId,
+          'p-2 rounded cursor-pointer truncate': true,
+          'text-white': true
+        }"
+        @click="navigateToProjectHub(project.id)"
+      >
         {{ project.name }}
       </li>
     </ul>
