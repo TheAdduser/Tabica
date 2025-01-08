@@ -67,7 +67,7 @@ watch(() => props.projectId, () => {
             <div
               v-for="task in column.expand.task"
               :key="task.id"
-              class="relative p-2 bg-gray-700 rounded-lg text-white min-h-30 font-bold cursor-pointer"
+              class="relative p-2 bg-gray-700 rounded-lg text-white min-h-30 font-bold cursor-pointer hover:bg-gray-600"
               @click="showTaskModal(task)"
             >
               {{ task.name }}
