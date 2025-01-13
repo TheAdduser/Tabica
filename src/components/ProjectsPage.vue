@@ -78,30 +78,30 @@ onMounted(() => {
 <template>
   <div>
     <Header />
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-      <div class="flex-row w-full max-w-2xl p-8 space-y-6 bg-gray-800 rounded shadow-md">
-        <h2 class="text-2xl font-bold text-center text-white">Projects</h2>
-        <div v-if="errorMessage" class="p-2 text-red-600 bg-red-100 rounded">
+    <div class="flex min-h-screen flex-col items-center justify-center bg-gray-900">
+      <div class="w-full max-w-2xl flex-row space-y-6 rounded bg-gray-800 p-8 shadow-md">
+        <h2 class="text-center text-2xl font-bold text-white">Projects</h2>
+        <div v-if="errorMessage" class="rounded bg-red-100 p-2 text-red-600">
           {{ errorMessage }}
         </div>
         <ul class="space-y-2">
-          <li v-for="project in projects" :key="project.id" class="text-white flex justify-between float-left w-full p-2 border-black rounded bg-gray-700 items-center">
-            <div class="bg-gray-600 p-2 border-black rounded w-full text-2xl font-bold">
+          <li v-for="project in projects" :key="project.id" class="float-left flex w-full items-center justify-between rounded border-black bg-gray-700 p-2 text-white">
+            <div class="w-full rounded border-black bg-gray-600 p-2 text-2xl font-bold">
               <router-link :to="'/hub/' + project.id">
                 <div class="break-all">{{ project.name }}</div>
               </router-link>
             </div>
-            <button @click="confirmDeleteProject(project)" class="ml-4 px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700 float-right text-xl max-h-12">
+            <button @click="confirmDeleteProject(project)" class="float-right ml-4 max-h-12 rounded bg-red-500 px-4 py-2 text-xl font-bold text-white hover:bg-red-700">
               Delete
             </button>
           </li>
         </ul>
         <form @submit.prevent="createProject" class="space-y-4">
           <div>
-            <label for="newProjectName" class="block mb-2 text-sm font-bold text-gray-300">New Project Name</label>
-            <input v-model="newProjectName" type="text" id="newProjectName" class="w-full px-3 py-2 border-black rounded bg-gray-700 text-white" required />
+            <label for="newProjectName" class="mb-2 block text-sm font-bold text-gray-300">New Project Name</label>
+            <input v-model="newProjectName" type="text" id="newProjectName" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" required />
           </div>
-          <button type="submit" class="px-4 py-2 font-bold text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">
+          <button type="submit" class="rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
             Create Project
           </button>
         </form>

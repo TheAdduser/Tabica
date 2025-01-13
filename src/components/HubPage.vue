@@ -14,17 +14,17 @@ watch(() => route.params.id, (newId) => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-gray-900">
-    <Header class=" top-0 z-10" />
+  <div class="flex min-h-screen flex-col bg-gray-900">
+    <Header class="top-0 z-10" />
     <div class="flex flex-1">
-      <SideBar class="sticky left-0 top-0 h-screen z-10" />
-      <div class="flex-1 relative">
+      <SideBar class="sticky left-0 top-0 z-10 h-screen" />
+      <div class="relative flex-1">
         <div class="absolute inset-0 overflow-x-auto overflow-y-hidden">
-          <div class="flex flex-col min-h-full">
+          <div class="flex min-h-full flex-col">
             <div v-if="projectId" class="flex-1">
               <KanbanBoard :projectId="projectId" />
             </div>
-            <div v-else class="flex items-center justify-center w-full h-full pt-50 text-white font-bold">
+            <div v-else class="pt-50 flex h-full w-full items-center justify-center font-bold text-white">
               <p>Please choose a project from the sidebar to proceed.</p>
             </div>
           </div>

@@ -88,27 +88,27 @@ const goToHub = () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-    <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded shadow-md">
-      <h2 class="text-2xl font-bold text-center text-white">Account Options</h2>
-      <div v-if="errorMessage" class="p-2 text-red-600 bg-red-100 rounded">
+  <div class="flex min-h-screen flex-col items-center justify-center bg-gray-900">
+    <div class="w-full max-w-md space-y-6 rounded bg-gray-800 p-8 shadow-md">
+      <h2 class="text-center text-2xl font-bold text-white">Account Options</h2>
+      <div v-if="errorMessage" class="rounded bg-red-100 p-2 text-red-600">
         {{ errorMessage }}
       </div>
-      <div v-if="successMessage" class="p-2 text-green-600 bg-green-100 rounded">
+      <div v-if="successMessage" class="rounded bg-green-100 p-2 text-green-600">
         {{ successMessage }}
       </div>
       <div class="space-y-4">
         <div>
-          <label for="name" class="block mb-2 text-sm font-bold text-gray-300">Name</label>
-          <input v-model="name" type="text" id="name" class="w-full px-3 py-2 border-black rounded bg-gray-700 text-white" />
+          <label for="name" class="mb-2 block text-sm font-bold text-gray-300">Name</label>
+          <input v-model="name" type="text" id="name" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
-        <button @click="updateProfile" class="w-full px-4 py-2 font-bold text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">
+        <button @click="updateProfile" class="w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
           Update Profile
         </button>
         <div>
-          <label class="block mb-2 text-sm font-bold text-gray-300">Avatar</label>
+          <label class="mb-2 block text-sm font-bold text-gray-300">Avatar</label>
           <div
-            class="w-full p-4 border-2 border-dashed border-gray-500 rounded bg-gray-700 text-white text-center"
+            class="w-full rounded border-2 border-dashed border-gray-500 bg-gray-700 p-4 text-center text-white"
             @drop="handleDrop"
             @dragover="handleDragOver"
             @click="$refs.fileInput.click()"
@@ -117,26 +117,26 @@ const goToHub = () => {
             <p v-if="!avatarFile">Drag and drop an avatar image here, or click to select a file</p>
             <p v-else>{{ avatarFile.name }}</p>
           </div>
-          <button @click="updateAvatar" class="w-full px-4 py-2 font-bold text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a] mt-4">
+          <button @click="updateAvatar" class="mt-4 w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
             Update Avatar
           </button>
         </div>
         <div>
-          <label for="currentPassword" class="block mb-2 text-sm font-bold text-gray-300">Current Password</label>
-          <input v-model="currentPassword" type="password" id="currentPassword" class="w-full px-3 py-2 border-black rounded bg-gray-700 text-white" />
+          <label for="currentPassword" class="mb-2 block text-sm font-bold text-gray-300">Current Password</label>
+          <input v-model="currentPassword" type="password" id="currentPassword" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
         <div>
-          <label for="newPassword" class="block mb-2 text-sm font-bold text-gray-300">New Password</label>
-          <input v-model="newPassword" type="password" id="newPassword" class="w-full px-3 py-2 border-black rounded bg-gray-700 text-white" />
+          <label for="newPassword" class="mb-2 block text-sm font-bold text-gray-300">New Password</label>
+          <input v-model="newPassword" type="password" id="newPassword" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
         <div>
-          <label for="confirmPassword" class="block mb-2 text-sm font-bold text-gray-300">Confirm New Password</label>
-          <input v-model="confirmPassword" type="password" id="confirmPassword" class="w-full px-3 py-2 border-black rounded bg-gray-700 text-white" />
+          <label for="confirmPassword" class="mb-2 block text-sm font-bold text-gray-300">Confirm New Password</label>
+          <input v-model="confirmPassword" type="password" id="confirmPassword" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
-        <button @click="updatePassword" class="w-full px-4 py-2 font-bold text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">
+        <button @click="updatePassword" class="w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
           Update Password
         </button>
-        <button @click="goToHub" class="w-full px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700 mt-4">
+        <button @click="goToHub" class="mt-4 w-full rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700">
           Back to Hub
         </button>
       </div>
