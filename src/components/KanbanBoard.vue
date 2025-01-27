@@ -71,11 +71,13 @@ watch(() => props.projectId, () => {
               @click="showTaskModal(task)"
             >
               {{ task.name }}
+
+              <img v-if="task.expand.assignee" :src="pb.files.getURL(task.expand.assignee, task.expand.assignee.avatar)" alt="Avatar" class="absolute bottom-2 left-2 h-8 w-8 rounded-full" />
+  
               <div class="absolute bottom-2 right-2 flex items-center space-x-2">
                 <i v-if="task.priority === 'Low'" class="fas fa-arrow-down text-blue-500"></i>
                 <i v-if="task.priority === 'Medium'" class="fas fa-equals text-yellow-500"></i>
-                <i v-if="task.priority === 'High'" class="fas fa-arrow-up text-red-500"></i>
-                <img v-if="task.assignedUser" :src="`http://127.0.0.1:8090/api/files/users/${task.assignedUser.id}/${task.assignedUser.avatar}`" alt="Avatar" class="h-6 w-6 rounded-full" />
+                <i v-if="task.priority === 'High'" class="fas fa-arrow-up text-red-500"></i>     
               </div>
             </div>
           </div>
