@@ -19,6 +19,7 @@ const projectAssignees = ref([]);
 const taskDescription = ref('');
 const taskStatus = ref('');
 const columns = ref([]);
+const isProjectOwner = ref(false);
 
 const fetchColumns = async () => {
   try {
@@ -26,6 +27,7 @@ const fetchColumns = async () => {
       expand: 'column',
     });
     columns.value = project.expand.column || [];
+    isProjectOwner.value = project.owner === pb.authStore.model.id;
   } catch (error) {
     console.error('Failed to fetch columns', error);
   }
@@ -88,6 +90,23 @@ const updateTask = async () => {
     console.error('Failed to update task', error);
   }
 };
+
+const deleteTask = async () => {
+  try {
+    await pb.collection('tasks').delete(props.task.id);
+
+    const currentColumn = columns.value.find(col => col.task.includes(props.task.id));
+    if (currentColumn) {
+      currentColumn.task = currentColumn.task.filter(taskId => taskId !== props.task.id);
+      await pb.collection('columns').update(currentColumn.id, { task: currentColumn.task });
+    }
+
+    emit('taskUpdated');
+    props.onClose();
+  } catch (error) {
+    console.error('Failed to delete task', error);
+  }
+};
 </script>
 
 <template>
@@ -127,7 +146,8 @@ const updateTask = async () => {
         <textarea v-model="taskDescription" id="taskDescription" class="w-full rounded border px-3 py-2 text-white"></textarea>
       </div>
       <div class="flex justify-end space-x-4">
-        <button @click="props.onClose" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+        <button v-if="isProjectOwner" @click="deleteTask" class="px-4 py-2 text-white bg-red-700 rounded hover:bg-red-800">Delete Task</button>
+        <button @click="props.onClose" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
         <button @click="updateTask" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Task</button>
       </div>
     </div>
