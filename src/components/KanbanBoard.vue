@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
 import PocketBase from 'pocketbase';
-import { defineProps } from 'vue';
 import TaskDetailsModal from './TaskDetailsModal.vue';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
@@ -20,7 +19,7 @@ const fetchData = async () => {
     const project = await pb.collection('projects').getOne(props.projectId, {
       expand: 'column.task.assignee',
     });
-
+    console.log(project);
     columns.value = project.expand.column.sort((a, b) => a.columnOrder - b.columnOrder);
     tasks.value = project.expand.column.flatMap(column => column.expand.task);
   } catch (error) {
