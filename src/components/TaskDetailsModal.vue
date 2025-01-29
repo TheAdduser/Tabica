@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch} from 'vue';
+import { ref, watch } from 'vue';
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
@@ -15,24 +15,49 @@ const taskName = ref('');
 const taskAuthor = ref('');
 const taskPriority = ref('');
 const taskAssignee = ref('');
-let projectAssignee = ref([]);
+const projectAssignees = ref([]);
 const taskDescription = ref('');
+const taskStatus = ref('');
+const columns = ref([]);
+
+const fetchColumns = async () => {
+  try {
+    const project = await pb.collection('projects').getOne(props.projectId, {
+      expand: 'column',
+    });
+    columns.value = project.expand.column || [];
+  } catch (error) {
+    console.error('Failed to fetch columns', error);
+  }
+};
+
+const fetchTaskDetails = async (Task) => {
+  if (Task) {
+    const author = await pb.collection('users').getOne(Task.author);
+    const project = await pb.collection('projects').getOne(props.projectId, {     
+      expand: 'assignee',
+    });
+    projectAssignees.value = project.expand.assignee || [];
+    taskName.value = Task.name;
+    taskAuthor.value = author.name;
+    taskPriority.value = Task.priority;
+    taskAssignee.value = Task.expand.assignee.id;
+    taskDescription.value = Task.description;
+
+    const column = columns.value.find(col => col.task.includes(Task.id));
+    if (column) {
+      taskStatus.value = column.id;
+    }
+  }
+};
 
 watch(
   () => props.task,
   async (Task) => {
     if (Task) {
-      const author = await pb.collection('users').getOne(Task.author);
-      projectAssignee = await pb.collection('projects').getOne(props.projectId, {     
-      expand: 'assignee',
-      });
-      taskName.value = Task.name;
-      taskAuthor.value = author.name;
-      taskPriority.value = Task.priority;
-      taskAssignee.value = Task.expand.assignee.id;
-      taskDescription.value = Task.description;
+      await fetchColumns();
+      await fetchTaskDetails(Task);
     }
-    console.log(projectAssignee);
   },
   { immediate: true }
 );
@@ -45,6 +70,18 @@ const updateTask = async () => {
       assignee: taskAssignee.value,
       description: taskDescription.value,
     });
+
+    const currentColumn = columns.value.find(col => col.task.includes(props.task.id));
+    const newColumn = columns.value.find(col => col.id === taskStatus.value);
+
+    if (currentColumn && newColumn && currentColumn.id !== newColumn.id) {
+      currentColumn.task = currentColumn.task.filter(taskId => taskId !== props.task.id);
+      await pb.collection('columns').update(currentColumn.id, { task: currentColumn.task });
+
+      newColumn.task.push(props.task.id);
+      await pb.collection('columns').update(newColumn.id, { task: newColumn.task });
+    }
+
     emit('taskUpdated');
     props.onClose();
   } catch (error) {
@@ -75,8 +112,14 @@ const updateTask = async () => {
       </div>
       <div class="mb-4">
         <label for="taskAssignee" class="mb-2 block text-sm font-bold text-white">Assigned User</label>
-        <select v-model="taskAssignee" id="taskAssignee" placeholder="test" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
-          <option v-for="user in projectAssignee.expand.assignee" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
+        <select v-model="taskAssignee" id="taskAssignee" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
+          <option v-for="user in projectAssignees" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="taskStatus" class="mb-2 block text-sm font-bold text-white">Status</label>
+        <select v-model="taskStatus" id="taskStatus" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
+          <option v-for="column in columns" :key="column.id" :value="column.id" class="text-white">{{ column.name }}</option>
         </select>
       </div>
       <div class="mb-4">
@@ -84,8 +127,8 @@ const updateTask = async () => {
         <textarea v-model="taskDescription" id="taskDescription" class="w-full rounded border px-3 py-2 text-white"></textarea>
       </div>
       <div class="flex justify-end space-x-4">
-        <button @click="props.onClose" class="rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300">Cancel</button>
-        <button @click="updateTask" class="rounded bg-[#40c27b] px-4 py-2 text-white hover:bg-[#2f8f5a]">Update Task</button>
+        <button @click="props.onClose" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+        <button @click="updateTask" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Task</button>
       </div>
     </div>
   </div>
