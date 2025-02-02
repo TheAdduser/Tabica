@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
@@ -9,25 +9,35 @@ const props = defineProps({
   projectId: String,
 });
 
-const emit = defineEmits(['projectUpdated']);
+const emit = defineEmits(['projectUpdated', 'columnAdded']);
 const projectName = ref('');
-const projectDescription = ref('');
 const newColumnName = ref('');
+const newAssigneeId = ref('');
+const searchAssignee = ref('');
 const columns = ref([]);
+const assignees = ref([]);
+const projectAssignees = ref([]);
 const errorMessage = ref('');
 
 const fetchProjectData = async () => {
   try {
     const project = await pb.collection('projects').getOne(props.projectId, {
-      expand: 'column',
+      expand: 'column,assignee',
     });
     projectName.value = project.name;
     columns.value = project.expand.column || [];
+    projectAssignees.value = project.expand.assignee || [];
+    const allUsers = await pb.collection('users').getFullList();
+    assignees.value = allUsers.filter(user => !projectAssignees.value.some(assignee => assignee.id === user.id));
   } catch (error) {
     console.error('Failed to fetch project data', error);
     errorMessage.value = 'Failed to fetch project data';
   }
 };
+
+const filteredAssignees = computed(() => {
+  return assignees.value.filter(user => user.name.toLowerCase().includes(searchAssignee.value.toLowerCase()));
+});
 
 const updateProject = async () => {
   try {
@@ -54,6 +64,7 @@ const addColumn = async () => {
       name: newColumnName.value,
       columnOrder: columnOrder,
     });
+
     columns.value.push(newColumn);
 
     await pb.collection('projects').update(props.projectId, {
@@ -61,10 +72,47 @@ const addColumn = async () => {
     });
 
     newColumnName.value = '';
-    emit('projectUpdated');
+    emit('columnAdded');
   } catch (error) {
     console.error('Failed to add column', error);
     errorMessage.value = 'Failed to add column';
+  }
+};
+
+const addAssignee = async () => {
+  if (!newAssigneeId.value) {
+    errorMessage.value = 'Assignee cannot be empty';
+    return;
+  }
+
+  try {
+    const newAssignee = assignees.value.find(user => user.id === newAssigneeId.value);
+    if (newAssignee) {
+      projectAssignees.value.push(newAssignee);
+      await pb.collection('projects').update(props.projectId, {
+        assignee: projectAssignees.value.map(assignee => assignee.id),
+      });
+      newAssigneeId.value = '';
+      fetchProjectData();
+    }
+  } catch (error) {
+    console.error('Failed to add assignee', error);
+    errorMessage.value = 'Failed to add assignee';
+  }
+};
+
+const removeAssignee = async (assigneeId) => {
+  try {
+    projectAssignees.value = projectAssignees.value.filter(assignee => assignee.id !== assigneeId);
+
+    await pb.collection('projects').update(props.projectId, {
+      assignee: projectAssignees.value.map(assignee => assignee.id),
+    });
+
+    fetchProjectData();
+  } catch (error) {
+    console.error('Failed to remove assignee', error);
+    errorMessage.value = 'Failed to remove assignee';
   }
 };
 
@@ -95,6 +143,26 @@ onMounted(() => {
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
           <li v-for="column in columns" :key="column.id" class="text-white">{{ column.name }}</li>
+        </ul>
+      </div>
+      <div class="mb-4">
+        <label for="searchAssignee" class="mb-2 block text-sm font-bold text-white">Search Assignee</label>
+        <input v-model="searchAssignee" type="text" id="searchAssignee" class="w-full rounded border px-3 py-2 text-white" />
+      </div>
+      <div class="mb-4">
+        <label for="newAssignee" class="mb-2 block text-sm font-bold text-white">Add Assignee</label>
+        <select v-model="newAssigneeId" id="newAssignee" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
+          <option v-for="user in filteredAssignees" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
+        </select>
+        <button @click="addAssignee" class="mt-2 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">Add Assignee</button>
+      </div>
+      <div class="mb-4">
+        <h3 class="mb-2 text-sm font-bold text-white">Assignees</h3>
+        <ul>
+          <li v-for="assignee in projectAssignees" :key="assignee.id" class="flex justify-between text-white">
+            {{ assignee.name }}
+            <button @click="removeAssignee(assignee.id)" class="text-red-500 hover:text-red-700">Remove</button>
+          </li>
         </ul>
       </div>
       <div class="flex justify-end">
