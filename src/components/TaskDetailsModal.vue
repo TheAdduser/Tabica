@@ -26,7 +26,7 @@ const fetchColumns = async () => {
     const project = await pb.collection('projects').getOne(props.projectId, {
       expand: 'column',
     });
-    columns.value = project.expand.column || [];
+    columns.value = (project.expand.column || []).sort((a, b) => a.columnOrder - b.columnOrder);
     isProjectOwner.value = project.owner === pb.authStore.model.id;
   } catch (error) {
     console.error('Failed to fetch columns', error);

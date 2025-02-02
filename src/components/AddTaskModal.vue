@@ -26,7 +26,7 @@ const fetchProjectData = async () => {
     const project = await pb.collection('projects').getOne(props.projectId, {
       expand: 'column,assignee',
     });
-    columns.value = project.expand.column || [];
+    columns.value = (project.expand.column || []).sort((a, b) => a.columnOrder - b.columnOrder);
     projectAssignees.value = project.expand.assignee || [];
   } catch (error) {
     console.error('Failed to fetch project data', error);
