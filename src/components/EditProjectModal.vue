@@ -116,6 +116,40 @@ const removeAssignee = async (assigneeId) => {
   }
 };
 
+const moveColumnUp = async (index) => {
+  if (index === 0) return;
+  const temp = columns.value[index];
+  columns.value[index] = columns.value[index - 1];
+  columns.value[index - 1] = temp;
+  await updateColumnOrder();
+};
+
+const moveColumnDown = async (index) => {
+  if (index === columns.value.length - 1) return;
+  const temp = columns.value[index];
+  columns.value[index] = columns.value[index + 1];
+  columns.value[index + 1] = temp;
+  await updateColumnOrder();
+};
+
+const updateColumnOrder = async () => {
+  try {
+    for (let i = 0; i < columns.value.length; i++) {
+      columns.value[i].columnOrder = i + 1;
+      await pb.collection('columns').update(columns.value[i].id, {
+        columnOrder: columns.value[i].columnOrder,
+      });
+    }
+    await pb.collection('projects').update(props.projectId, {
+      column: columns.value.map(col => col.id),
+    });
+    emit('projectUpdated');
+  } catch (error) {
+    console.error('Failed to update column order', error);
+    errorMessage.value = 'Failed to update column order';
+  }
+};
+
 onMounted(() => {
   if (props.projectId) {
     fetchProjectData();
@@ -142,12 +176,14 @@ onMounted(() => {
       <div class="mb-4">
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
-          <li v-for="column in columns" :key="column.id" class="text-white">{{ column.name }}</li>
+          <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
+            <span>{{ column.name }}</span>
+            <div>
+              <button @click="moveColumnUp(index)" class="text-blue-500 hover:text-blue-700">Up</button>
+              <button @click="moveColumnDown(index)" class="ml-2 text-blue-500 hover:text-blue-700">Down</button>
+            </div>
+          </li>
         </ul>
-      </div>
-      <div class="mb-4">
-        <label for="searchAssignee" class="mb-2 block text-sm font-bold text-white">Search Assignee</label>
-        <input v-model="searchAssignee" type="text" id="searchAssignee" class="w-full rounded border px-3 py-2 text-white" />
       </div>
       <div class="mb-4">
         <label for="newAssignee" class="mb-2 block text-sm font-bold text-white">Add Assignee</label>
