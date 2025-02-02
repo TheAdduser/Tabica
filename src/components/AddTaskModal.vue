@@ -53,7 +53,7 @@ const addTask = async () => {
       await pb.collection('columns').update(taskColumn.id, { task: taskColumn.task });
     }
 
-    emit('taskAdded', newTask);
+    emit('taskAdded');
     props.onClose();
   } catch (error) {
     console.error('Failed to add task', error);
@@ -111,7 +111,7 @@ onMounted(() => {
       </div>
       <div class="flex justify-end">
         <button @click="addTask" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Add Task</button>
-        <button @click="props.onClose" class="ml-2 px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">Cancel</button>
+        <button @click="props.onClose" class="ml-2 px-4 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>

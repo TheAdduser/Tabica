@@ -4,6 +4,7 @@ import PocketBase from 'pocketbase';
 import { useRouter, useRoute } from 'vue-router';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
+pb.autoCancellation(false);
 const router = useRouter();
 const route = useRoute();
 
@@ -15,6 +16,7 @@ const fetchProjects = async () => {
   try {
     projects.value = await pb.collection('projects').getFullList();
   } catch (error) {
+    console.error('Failed to fetch projects', error);
     errorMessage.value = 'Failed to fetch projects';
   }
 };
@@ -24,9 +26,14 @@ const navigateToProjectHub = (projectId) => {
   selectedProjectId.value = projectId;
 };
 
+const handleProjectUpdated = () => {
+  fetchProjects();
+};
+//refreashing data is not working
 watch(() => route.params.id, (newId) => {
   selectedProjectId.value = newId;
-});
+  fetchProjects();
+}, { immediate: true });
 
 onMounted(() => {
   fetchProjects();

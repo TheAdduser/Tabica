@@ -147,8 +147,8 @@ const deleteTask = async () => {
       </div>
       <div class="flex justify-end space-x-4">
         <button v-if="isProjectOwner" @click="deleteTask" class="px-4 py-2 text-white bg-red-700 rounded hover:bg-red-800">Delete Task</button>
-        <button @click="props.onClose" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
         <button @click="updateTask" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Task</button>
+        <button @click="props.onClose" class="px-4 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>
