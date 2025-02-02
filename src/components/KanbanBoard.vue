@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch} from 'vue';
 import PocketBase from 'pocketbase';
 import TaskDetailsModal from './TaskDetailsModal.vue';
+import AddTaskModal from './AddTaskModal.vue';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -12,6 +13,7 @@ const columns = ref([]);
 const tasks = ref([]);
 const errorMessage = ref('');
 const showModal = ref(false);
+const showAddTaskModal = ref(false);
 const selectedTask = ref(null);
 
 const fetchData = async () => {
@@ -41,6 +43,10 @@ const handleTaskUpdated = () => {
   fetchData();
 };
 
+const handleTaskAdded = () => {
+  fetchData();
+};
+//handle not working and not refreshing the data after adding a new task
 watch(() => props.projectId, () => {
   if (typeof props.projectId !== 'undefined') {
     fetchData();
@@ -85,6 +91,7 @@ watch(() => props.projectId, () => {
       </div>
     </div>
 
-    <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated" :showModal="showModal" :projectId="projectId" :onClose="closeTaskModal" />
+    <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated" :showModal="showModal" :projectId="props.projectId" :onClose="closeTaskModal" />
+    <AddTaskModal v-if="showAddTaskModal" :showModal="showAddTaskModal" :projectId="props.projectId" @taskAdded="handleTaskUpdated" @close="closeTaskModal" />
   </div>
 </template>
