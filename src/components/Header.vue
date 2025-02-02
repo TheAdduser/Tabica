@@ -66,6 +66,10 @@ const closeEditProjectModal = () => {
   showEditProjectModal.value = false;
 };
 
+const handleProjectUpdated = () => {
+  fetchProjectOwner();
+};
+
 watch(() => route.params.id, (newId) => {
   fetchProjectOwner();
 });
