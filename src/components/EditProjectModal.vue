@@ -73,7 +73,7 @@ const addColumn = async () => {
 
     newColumnName.value = '';
     emit('columnAdded');
-    fetchProjectData();
+    fetchProjectData(); // Ensure the columns are re-fetched
   } catch (error) {
     console.error('Failed to add column', error);
     errorMessage.value = 'Failed to add column';
@@ -169,6 +169,24 @@ const removeColumn = async (index) => {
   }
 };
 
+const renameColumn = async (index, newName) => {
+  if (!newName) {
+    errorMessage.value = 'Column name cannot be empty';
+    return;
+  }
+
+  try {
+    await pb.collection('columns').update(columns.value[index].id, {
+      name: newName,
+    });
+    columns.value[index].name = newName;
+    fetchProjectData();
+  } catch (error) {
+    console.error('Failed to rename column', error);
+    errorMessage.value = 'Failed to rename column';
+  }
+};
+
 onMounted(() => {
   if (props.projectId) {
     fetchProjectData();
@@ -178,7 +196,7 @@ onMounted(() => {
 
 <template>
   <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
-    <div class="w-full max-w-md rounded bg-gray-600 p-6 shadow-md">
+    <div class="w-full max-w-2xl rounded bg-gray-600 p-6 shadow-md">
       <h2 class="mb-4 text-2xl font-bold text-white">Edit Project</h2>
       <div v-if="errorMessage" class="mb-4 p-2 text-red-600 bg-red-100 rounded">
         {{ errorMessage }}
@@ -196,10 +214,11 @@ onMounted(() => {
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
           <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
-            <span>{{ column.name }}</span>
+            <input v-model="column.name" type="text" class="w-2/3 mb-2 rounded border px-2 py-1 text-white" />
             <div>
               <button @click="moveColumnUp(index)" class="text-blue-500 hover:text-blue-700">Up</button>
               <button @click="moveColumnDown(index)" class="ml-2 text-blue-500 hover:text-blue-700">Down</button>
+              <button @click="renameColumn(index, column.name)" class="ml-2 text-green-500 hover:text-green-700">Rename</button>
               <button @click="removeColumn(index)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
             </div>
           </li>
@@ -208,7 +227,7 @@ onMounted(() => {
       <div class="mb-4">
         <label for="newAssignee" class="mb-2 block text-sm font-bold text-white">Add Assignee</label>
         <select v-model="newAssigneeId" id="newAssignee" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
-          <option v-for="user in filteredAssignees" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
+          <option v-for="user in assignees" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
         </select>
         <button @click="addAssignee" class="mt-2 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">Add Assignee</button>
       </div>
