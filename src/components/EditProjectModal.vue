@@ -22,7 +22,7 @@ const errorMessage = ref('');
 const fetchProjectData = async () => {
   try {
     const project = await pb.collection('projects').getOne(props.projectId, {
-      expand: 'column,assignee',
+      expand: 'column,assignee,column.task',
     });
     projectName.value = project.name;
     columns.value = project.expand.column || [];
@@ -73,6 +73,7 @@ const addColumn = async () => {
 
     newColumnName.value = '';
     emit('columnAdded');
+    fetchProjectData();
   } catch (error) {
     console.error('Failed to add column', error);
     errorMessage.value = 'Failed to add column';
@@ -150,6 +151,24 @@ const updateColumnOrder = async () => {
   }
 };
 
+const removeColumn = async (index) => {
+  const column = columns.value[index];
+  if (column.expand.task && column.expand.task.length > 0) {
+    errorMessage.value = 'Please remove all tasks from the column before deleting it.';
+    return;
+  }
+
+  try {
+    await pb.collection('columns').delete(column.id);
+    columns.value.splice(index, 1);
+    await updateColumnOrder();
+    fetchProjectData();
+  } catch (error) {
+    console.error('Failed to remove column', error);
+    errorMessage.value = 'Failed to remove column';
+  }
+};
+
 onMounted(() => {
   if (props.projectId) {
     fetchProjectData();
@@ -181,6 +200,7 @@ onMounted(() => {
             <div>
               <button @click="moveColumnUp(index)" class="text-blue-500 hover:text-blue-700">Up</button>
               <button @click="moveColumnDown(index)" class="ml-2 text-blue-500 hover:text-blue-700">Down</button>
+              <button @click="removeColumn(index)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
             </div>
           </li>
         </ul>
