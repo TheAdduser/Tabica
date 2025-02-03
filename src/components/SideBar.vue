@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import PocketBase from 'pocketbase';
 import { useRouter, useRoute } from 'vue-router';
+import CreateProjectModal from './CreateProjectModal.vue';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 pb.autoCancellation(false);
@@ -11,6 +12,7 @@ const route = useRoute();
 const projects = ref([]);
 const errorMessage = ref('');
 const selectedProjectId = ref(route.params.id);
+const showCreateProjectModal = ref(false);
 
 const fetchProjects = async () => {
   try {
@@ -29,7 +31,12 @@ const navigateToProjectHub = (projectId) => {
 const handleProjectUpdated = () => {
   fetchProjects();
 };
-//refreashing data is not working
+
+const handleProjectCreated = (newProject) => {
+  fetchProjects();
+  navigateToProjectHub(newProject.id);
+};
+
 watch(() => route.params.id, (newId) => {
   selectedProjectId.value = newId;
   fetchProjects();
@@ -61,5 +68,9 @@ onMounted(() => {
         {{ project.name }}
       </li>
     </ul>
+    <div class="mt-4">
+      <button @click="showCreateProjectModal = true" class="w-full px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Create New Project</button>
+    </div>
+    <CreateProjectModal v-if="showCreateProjectModal" :showModal="showCreateProjectModal" @projectCreated="handleProjectCreated" @close="() => showCreateProjectModal = false" />
   </div>
 </template>
