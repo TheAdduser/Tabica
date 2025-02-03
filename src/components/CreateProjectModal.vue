@@ -60,9 +60,9 @@ const createProject = async () => {
         <label for="projectName" class="mb-2 block text-sm font-bold text-white">Project Name</label>
         <input v-model="projectName" type="text" id="projectName" class="w-full rounded border px-3 py-2 text-white" />
       </div>
-      <div class="flex justify-end">
-        <button @click="createProject" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Create Project</button>
-        <button @click="props.onClose" class="ml-2 px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">Cancel</button>
+      <div class="flex justify-end space-x-2">
+        <button @click="createProject" class="px-2 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Create Project</button>
+        <button @click="props.onClose" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>

@@ -9,15 +9,15 @@ const props = defineProps({
   projectId: String,
 });
 
-const emit = defineEmits(['projectUpdated', 'columnAdded']);
+const emit = defineEmits(['projectUpdated', 'columnAdded', 'projectRemoved']);
 const projectName = ref('');
 const newColumnName = ref('');
 const newAssigneeId = ref('');
-const searchAssignee = ref('');
 const columns = ref([]);
 const assignees = ref([]);
 const projectAssignees = ref([]);
 const errorMessage = ref('');
+const showConfirmation = ref(false);
 
 const fetchProjectData = async () => {
   try {
@@ -34,10 +34,6 @@ const fetchProjectData = async () => {
     errorMessage.value = 'Failed to fetch project data';
   }
 };
-
-const filteredAssignees = computed(() => {
-  return assignees.value.filter(user => user.name.toLowerCase().includes(searchAssignee.value.toLowerCase()));
-});
 
 const updateProject = async () => {
   try {
@@ -73,7 +69,7 @@ const addColumn = async () => {
 
     newColumnName.value = '';
     emit('columnAdded');
-    fetchProjectData(); // Ensure the columns are re-fetched
+    fetchProjectData();
   } catch (error) {
     console.error('Failed to add column', error);
     errorMessage.value = 'Failed to add column';
@@ -187,6 +183,26 @@ const renameColumn = async (index, newName) => {
   }
 };
 
+const removeProject = async () => {
+  try {
+    for (const column of columns.value) {
+      if (column.expand.task) {
+        for (const task of column.expand.task) {
+          await pb.collection('tasks').delete(task.id);
+        }
+      }
+      await pb.collection('columns').delete(column.id);
+    }
+
+    await pb.collection('projects').delete(props.projectId);
+    emit('projectRemoved');
+    props.onClose();
+  } catch (error) {
+    console.error('Failed to remove project', error);
+    errorMessage.value = 'Failed to remove project';
+  }
+};
+
 onMounted(() => {
   if (props.projectId) {
     fetchProjectData();
@@ -214,12 +230,12 @@ onMounted(() => {
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
           <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
-            <input v-model="column.name" type="text" class="w-2/3 mb-2 rounded border px-2 py-1 text-white" />
+            <input v-model="column.name" type="text" class="w-2/3 rounded border px-2 py-1 text-black" />
             <div>
               <button @click="moveColumnUp(index)" class="text-blue-500 hover:text-blue-700">Up</button>
               <button @click="moveColumnDown(index)" class="ml-2 text-blue-500 hover:text-blue-700">Down</button>
-              <button @click="renameColumn(index, column.name)" class="ml-2 text-green-500 hover:text-green-700">Rename</button>
               <button @click="removeColumn(index)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
+              <button @click="renameColumn(index, column.name)" class="ml-2 text-green-500 hover:text-green-700">Rename</button>
             </div>
           </li>
         </ul>
@@ -240,9 +256,20 @@ onMounted(() => {
           </li>
         </ul>
       </div>
-      <div class="flex justify-end">
-        <button @click="updateProject" class="px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Project</button>
-        <button @click="props.onClose" class="ml-2 px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">Cancel</button>
+      <div class="flex justify-end space-x-2">
+        <button @click="showConfirmation = true" class="px-2 py-2 text-white bg-red-500 rounded hover:bg-red-600">Delete Project</button>
+        <button @click="updateProject" class="px-2 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Project</button>
+        <button @click="props.onClose" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
+      </div>
+      <div v-if="showConfirmation" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
+        <div class="w-full max-w-md rounded bg-gray-600 p-6 shadow-md">
+          <h2 class="mb-4 text-2xl font-bold text-white">Confirm Deletion</h2>
+          <p class="mb-4 text-white">Are you sure you want to delete this project? This action cannot be undone.</p>
+          <div class="flex justify-end space-x-2">
+            <button @click="removeProject" class="px-2 py-2 text-white bg-red-500 rounded hover:bg-red-600">Delete</button>
+            <button @click="showConfirmation = false" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
