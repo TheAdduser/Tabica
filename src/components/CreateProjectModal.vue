@@ -25,7 +25,7 @@ const createProject = async () => {
       assignee: [pb.authStore.model.id],
     });
 
-    const defaultColumns = ['To Do', 'In Progress', 'Done'];
+    const defaultColumns = ['Backlog', 'In Progress', 'Code Review','Ready For Testing','In Testing','Deployed on DEV', 'Deployed on UAT','Ready for Deployment', 'Deployed on PROD'];
     const columnIds = [];
     for (let i = 0; i < defaultColumns.length; i++) {
       const newColumn = await pb.collection('columns').create({
