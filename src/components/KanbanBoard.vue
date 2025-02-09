@@ -1,9 +1,10 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import PocketBase from 'pocketbase';
 import TaskDetailsModal from './TaskDetailsModal.vue';
 import AddTaskModal from './AddTaskModal.vue';
 import EditProjectModal from './EditProjectModal.vue';
+import eventBus from '../eventBus';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -46,7 +47,7 @@ const handleTaskUpdated = () => {
   fetchData();
 };
 
-const handleColumnAdded = () => {
+const handleRefreshKanban = () => {
   fetchData();
 };
 
@@ -58,6 +59,11 @@ watch(() => props.projectId, () => {
 
 onMounted(() => {
   fetchData();
+  eventBus.on('refreshKanban', handleRefreshKanban);
+});
+
+onBeforeUnmount(() => {
+  eventBus.off('refreshKanban', handleRefreshKanban);
 });
 </script>
 
@@ -99,7 +105,7 @@ onMounted(() => {
 
       <TaskDetailsModal v-if="showModal" :task="selectedTask" @taskUpdated="handleTaskUpdated" :showModal="showModal" :projectId="props.projectId" :onClose="closeTaskModal" />
       <AddTaskModal v-if="showAddTaskModal" :showModal="showAddTaskModal" :projectId="props.projectId" @taskAdded="handleTaskUpdated" @close="closeTaskModal" />
-      <EditProjectModal v-if="showEditProjectModal" :showModal="showEditProjectModal" :projectId="props.projectId" @columnAdded="handleColumnAdded" @close="closeTaskModal" />
+      <EditProjectModal v-if="showEditProjectModal" :showModal="showEditProjectModal" :projectId="props.projectId" @refreshKanban="handleRefreshKanban" @close="closeTaskModal" />
     </template>
   </div>
 </template>

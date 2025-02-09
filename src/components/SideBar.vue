@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
 import PocketBase from 'pocketbase';
 import { useRouter, useRoute } from 'vue-router';
 import CreateProjectModal from './CreateProjectModal.vue';
+import EditProjectModal from "./EditProjectModal.vue";
+import eventBus from '../eventBus';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 pb.autoCancellation(false);
@@ -28,13 +30,18 @@ const navigateToProjectHub = (projectId) => {
   selectedProjectId.value = projectId;
 };
 
-const handleProjectUpdated = () => {
-  fetchProjects();
+const navigateToHub = () => {
+  router.push('/hub');
 };
 
 const handleProjectCreated = (newProject) => {
   fetchProjects();
   navigateToProjectHub(newProject.id);
+};
+
+const handleProjectDeleted = () => {
+  fetchProjects();
+  navigateToHub();
 };
 
 watch(() => route.params.id, (newId) => {
@@ -44,6 +51,11 @@ watch(() => route.params.id, (newId) => {
 
 onMounted(() => {
   fetchProjects();
+  eventBus.on('refreshSidebar', handleProjectDeleted);
+});
+
+onBeforeUnmount(() => {
+  eventBus.off('refreshSidebar', handleProjectDeleted);
 });
 </script>
 
@@ -69,7 +81,7 @@ onMounted(() => {
       </li>
     </ul>
     <div class="mt-4">
-      <button @click="showCreateProjectModal = true" class="w-full px-4 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Create New Project</button>
+      <button @click="showCreateProjectModal = true" class="w-full rounded bg-[#40c27b] px-4 py-2 text-white hover:bg-[#2f8f5a]">Create New Project</button>
     </div>
     <CreateProjectModal v-if="showCreateProjectModal" :showModal="showCreateProjectModal" @projectCreated="handleProjectCreated" @close="() => showCreateProjectModal = false" />
   </div>

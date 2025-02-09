@@ -145,10 +145,10 @@ const deleteTask = async () => {
         <label for="taskDescription" class="mb-2 block text-sm font-bold text-white">Description</label>
         <textarea v-model="taskDescription" id="taskDescription" class="w-full rounded border px-3 py-2 text-white"></textarea>
       </div>
-      <div class="flex justify-end space-x-2">
-        <button v-if="isProjectOwner" @click="deleteTask" class="px-2 py-2 text-white bg-red-700 rounded hover:bg-red-800">Delete Task</button>
-        <button @click="updateTask" class="px-2 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Task</button>
-        <button @click="props.onClose" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
+      <div class="flex space-x-2">
+        <button v-if="isProjectOwner" @click="deleteTask" class="rounded bg-red-700 px-2 py-2 text-white hover:bg-red-800">Delete Task</button>
+        <button @click="updateTask" class="ml-auto rounded bg-[#40c27b] px-2 py-2 text-white hover:bg-[#2f8f5a]">Update Task</button>
+        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>

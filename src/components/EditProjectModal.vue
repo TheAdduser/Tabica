@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import PocketBase from 'pocketbase';
+import eventBus from '../eventBus';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 const props = defineProps({
@@ -9,7 +10,7 @@ const props = defineProps({
   projectId: String,
 });
 
-const emit = defineEmits(['projectUpdated', 'columnAdded', 'projectRemoved']);
+const emit = defineEmits(['refreshSidebar', 'refreshKanban']);
 const projectName = ref('');
 const newColumnName = ref('');
 const newAssigneeId = ref('');
@@ -35,16 +36,17 @@ const fetchProjectData = async () => {
   }
 };
 
-const updateProject = async () => {
+const changeProjectName = async () => {
   try {
     await pb.collection('projects').update(props.projectId, {
       name: projectName.value,
     });
-    emit('projectUpdated');
+    eventBus.emit('refreshSidebar');
+    eventBus.emit('refreshKanban');
     props.onClose();
   } catch (error) {
-    console.error('Failed to update project', error);
-    errorMessage.value = 'Failed to update project';
+    console.error('Failed to change the name', error);
+    errorMessage.value = 'Failed to change the name';
   }
 };
 
@@ -68,7 +70,7 @@ const addColumn = async () => {
     });
 
     newColumnName.value = '';
-    emit('columnAdded');
+    eventBus.emit('refreshKanban');
     fetchProjectData();
   } catch (error) {
     console.error('Failed to add column', error);
@@ -90,6 +92,7 @@ const addAssignee = async () => {
         assignee: projectAssignees.value.map(assignee => assignee.id),
       });
       newAssigneeId.value = '';
+      eventBus.emit('refreshKanban');
       fetchProjectData();
     }
   } catch (error) {
@@ -106,6 +109,7 @@ const removeAssignee = async (assigneeId) => {
       assignee: projectAssignees.value.map(assignee => assignee.id),
     });
 
+    eventBus.emit('refreshKanban');
     fetchProjectData();
   } catch (error) {
     console.error('Failed to remove assignee', error);
@@ -140,7 +144,7 @@ const updateColumnOrder = async () => {
     await pb.collection('projects').update(props.projectId, {
       column: columns.value.map(col => col.id),
     });
-    emit('projectUpdated');
+    eventBus.emit('refreshKanban');
   } catch (error) {
     console.error('Failed to update column order', error);
     errorMessage.value = 'Failed to update column order';
@@ -158,6 +162,7 @@ const removeColumn = async (index) => {
     await pb.collection('columns').delete(column.id);
     columns.value.splice(index, 1);
     await updateColumnOrder();
+    eventBus.emit('refreshKanban');
     fetchProjectData();
   } catch (error) {
     console.error('Failed to remove column', error);
@@ -176,6 +181,7 @@ const renameColumn = async (index, newName) => {
       name: newName,
     });
     columns.value[index].name = newName;
+    eventBus.emit('refreshKanban');
     fetchProjectData();
   } catch (error) {
     console.error('Failed to rename column', error);
@@ -195,7 +201,8 @@ const removeProject = async () => {
     }
 
     await pb.collection('projects').delete(props.projectId);
-    emit('projectRemoved');
+    eventBus.emit('refreshSidebar');
+    eventBus.emit('refreshKanban');
     props.onClose();
   } catch (error) {
     console.error('Failed to remove project', error);
@@ -220,6 +227,7 @@ onMounted(() => {
       <div class="mb-4">
         <label for="projectName" class="mb-2 block text-sm font-bold text-white">Project Name</label>
         <input v-model="projectName" type="text" id="projectName" class="w-full rounded border px-3 py-2 text-white" />
+        <button @click="changeProjectName" class="mt-2 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">Change Name</button>
       </div>
       <div class="mb-4">
         <label for="newColumnName" class="mb-2 block text-sm font-bold text-white">Add New Column</label>
@@ -230,7 +238,7 @@ onMounted(() => {
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
           <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
-            <input v-model="column.name" type="text" class="w-2/3 rounded border px-2 py-1 text-black" />
+            <input v-model="column.name" type="text" class="w-2/3 mb-1 rounded border px-2 py-1 text-white" />
             <div>
               <button @click="moveColumnUp(index)" class="text-blue-500 hover:text-blue-700">Up</button>
               <button @click="moveColumnDown(index)" class="ml-2 text-blue-500 hover:text-blue-700">Down</button>
@@ -256,10 +264,9 @@ onMounted(() => {
           </li>
         </ul>
       </div>
-      <div class="flex justify-end space-x-2">
+      <div class="flex space-x-2">
         <button @click="showConfirmation = true" class="px-2 py-2 text-white bg-red-500 rounded hover:bg-red-600">Delete Project</button>
-        <button @click="updateProject" class="px-2 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Update Project</button>
-        <button @click="props.onClose" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
+        <button @click="props.onClose" class="px-2 ml-auto py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Done</button>
       </div>
       <div v-if="showConfirmation" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
         <div class="w-full max-w-md rounded bg-gray-600 p-6 shadow-md">

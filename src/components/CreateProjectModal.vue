@@ -53,7 +53,7 @@ const createProject = async () => {
   <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
     <div class="w-full max-w-md rounded bg-gray-600 p-6 shadow-md">
       <h2 class="mb-4 text-2xl font-bold text-white">Create New Project</h2>
-      <div v-if="errorMessage" class="mb-4 p-2 text-red-600 bg-red-100 rounded">
+      <div v-if="errorMessage" class="mb-4 rounded bg-red-100 p-2 text-red-600">
         {{ errorMessage }}
       </div>
       <div class="mb-4">
@@ -61,8 +61,8 @@ const createProject = async () => {
         <input v-model="projectName" type="text" id="projectName" class="w-full rounded border px-3 py-2 text-white" />
       </div>
       <div class="flex justify-end space-x-2">
-        <button @click="createProject" class="px-2 py-2 text-white bg-[#40c27b] rounded hover:bg-[#2f8f5a]">Create Project</button>
-        <button @click="props.onClose" class="px-2 py-2 text-white bg-gray-400 rounded hover:bg-gray-500">Cancel</button>
+        <button @click="createProject" class="rounded bg-[#40c27b] px-2 py-2 text-white hover:bg-[#2f8f5a]">Create Project</button>
+        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>
