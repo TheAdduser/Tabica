@@ -244,7 +244,7 @@ onMounted(() => {
       <div class="mb-4">
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
         <ul>
-          <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
+          <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white border-b border-slate-300">
             <input v-model="column.name" type="text" class="w-2/3 px-2 py-1 text-white" />
             <div>
               <button @click="moveColumnUp(index)" title="Move column up" class="cursor-pointer text-blue-500 transition duration-500 hover:scale-105 hover:text-blue-700">
