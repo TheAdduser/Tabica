@@ -102,7 +102,7 @@ const goToHub = () => {
           <label for="name" class="mb-2 block text-sm font-bold text-gray-300">Name</label>
           <input v-model="name" type="text" id="name" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
-        <button @click="updateProfile" class="w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
+        <button @click="updateProfile" class="w-full cursor-pointer rounded bg-[#40c27b] px-4 py-2 font-bold text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">
           Update Profile
         </button>
         <div>
@@ -117,7 +117,7 @@ const goToHub = () => {
             <p v-if="!avatarFile">Drag and drop an avatar image here, or click to select a file</p>
             <p v-else>{{ avatarFile.name }}</p>
           </div>
-          <button @click="updateAvatar" class="mt-4 w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
+          <button @click="updateAvatar" class="mt-4 w-full cursor-pointer rounded bg-[#40c27b] px-4 py-2 font-bold text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">
             Update Avatar
           </button>
         </div>
@@ -133,10 +133,10 @@ const goToHub = () => {
           <label for="confirmPassword" class="mb-2 block text-sm font-bold text-gray-300">Confirm New Password</label>
           <input v-model="confirmPassword" type="password" id="confirmPassword" class="w-full rounded border-black bg-gray-700 px-3 py-2 text-white" />
         </div>
-        <button @click="updatePassword" class="w-full rounded bg-[#40c27b] px-4 py-2 font-bold text-white hover:bg-[#2f8f5a]">
+        <button @click="updatePassword" class="w-full cursor-pointer rounded bg-[#40c27b] px-4 py-2 font-bold text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">
           Update Password
         </button>
-        <button @click="goToHub" class="mt-4 w-full rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700">
+        <button @click="goToHub" class="mt-4 w-full cursor-pointer rounded bg-gray-500 px-4 py-2 font-bold text-white transition duration-500 hover:scale-105 hover:bg-gray-700">
           Back to Hub
         </button>
       </div>

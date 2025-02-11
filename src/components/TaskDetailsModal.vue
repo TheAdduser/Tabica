@@ -146,9 +146,9 @@ const deleteTask = async () => {
         <textarea v-model="taskDescription" id="taskDescription" class="w-full rounded border px-3 py-2 text-white"></textarea>
       </div>
       <div class="flex space-x-2">
-        <button v-if="isProjectOwner" @click="deleteTask" class="rounded bg-red-700 px-2 py-2 text-white hover:bg-red-800">Delete Task</button>
-        <button @click="updateTask" class="ml-auto rounded bg-[#40c27b] px-2 py-2 text-white hover:bg-[#2f8f5a]">Update Task</button>
-        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white hover:bg-gray-500">Cancel</button>
+        <button v-if="isProjectOwner" @click="deleteTask" class="cursor-pointer rounded bg-red-700 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-red-800">Delete Task</button>
+        <button @click="updateTask" class="ml-auto cursor-pointer rounded bg-[#40c27b] px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">Update Task</button>
+        <button @click="props.onClose" class="cursor-pointer rounded bg-gray-400 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>

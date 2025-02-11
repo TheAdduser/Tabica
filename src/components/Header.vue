@@ -89,8 +89,8 @@ onBeforeUnmount(() => {
   <header class="flex w-full items-center justify-between bg-gray-800 p-4">
     <h1 class="select-none text-2xl font-bold text-white">Tab[<span class="text-[#40c27b]">i</span>]ca</h1>
     <div class="flex items-center space-x-4">
-      <button v-if="isProjectOwner" @click="editProject" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700">Edit Project</button>
-      <button v-if="route.params.id" @click="createNewTask" class="rounded bg-[#40c27b] px-4 py-2 text-white hover:bg-[#2f8f5a]">Add New Task</button>
+      <button v-if="isProjectOwner" @click="editProject" class="cursor-pointer rounded bg-blue-500 px-4 py-2 text-white transition duration-500 hover:scale-105 hover:bg-blue-700">Edit Project</button>
+      <button v-if="route.params.id" @click="createNewTask" class="cursor-pointer rounded bg-[#40c27b] px-4 py-2 text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">Add New Task</button>
       <div class="relative" ref="dropdownRef">
         <button @click="toggleDropdown" class="flex items-center space-x-2 rounded p-2 hover:bg-gray-700">
           <img :src="user?.avatar ? `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}` : 'https://via.placeholder.com/40'" alt="Avatar" class="h-10 w-10 rounded-full" />

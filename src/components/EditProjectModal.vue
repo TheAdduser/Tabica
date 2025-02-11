@@ -234,12 +234,12 @@ onMounted(() => {
       <div class="mb-4">
         <label for="projectName" class="mb-2 block text-sm font-bold text-white">Project Name</label>
         <input v-model="projectName" type="text" id="projectName" class="w-full rounded border px-3 py-2 text-white" />
-        <button @click="changeProjectName" class="mt-2 rounded bg-blue-500 px-4 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-blue-700">Change Name</button>
+        <button @click="changeProjectName" class="mt-2 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white transition duration-500 hover:scale-105 hover:bg-blue-700">Change Name</button>
       </div>
       <div class="mb-4">
         <label for="newColumnName" class="mb-2 block text-sm font-bold text-white">Add New Column</label>
         <input v-model="newColumnName" type="text" id="newColumnName" class="w-full rounded border px-3 py-2 text-white" />
-        <button @click="addColumn" class="mt-2 rounded bg-blue-500 px-4 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-blue-700">Add Column</button>
+        <button @click="addColumn" class="mt-2 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white transition duration-500 hover:scale-105 hover:bg-blue-700">Add Column</button>
       </div>
       <div class="mb-4">
         <h3 class="mb-2 text-sm font-bold text-white">Columns</h3>
@@ -247,16 +247,16 @@ onMounted(() => {
           <li v-for="(column, index) in columns" :key="column.id" class="flex items-center justify-between text-white">
             <input v-model="column.name" type="text" class="w-2/3 px-2 py-1 text-white" />
             <div>
-              <button @click="moveColumnUp(index)" title="Move column up" class="text-blue-500 transition duration-500 cursor-pointer hover:scale-105 hover:text-blue-700">
+              <button @click="moveColumnUp(index)" title="Move column up" class="cursor-pointer text-blue-500 transition duration-500 hover:scale-105 hover:text-blue-700">
                 <i class="fas fa-arrow-up" title="Move column up"></i>
               </button>
-              <button @click="moveColumnDown(index)" title="Move column down" class="ml-2 text-blue-500 transition duration-500 cursor-pointer hover:scale-105 hover:text-blue-700">
+              <button @click="moveColumnDown(index)" title="Move column down" class="ml-2 cursor-pointer text-blue-500 transition duration-500 hover:scale-105 hover:text-blue-700">
                 <i class="fas fa-arrow-down" title="Move column down"></i>
               </button>
-              <button @click="renameColumn(index, column.name)" class="ml-2 text-green-500 transition duration-500 cursor-pointer hover:scale-105 hover:text-green-700">
+              <button @click="renameColumn(index, column.name)" class="ml-2 cursor-pointer text-green-500 transition duration-500 hover:scale-105 hover:text-green-700">
                 <i class="fas fa-pen" title="Rename column"></i>
               </button>
-              <button @click="removeColumn(index)" class="ml-2 text-red-500 transition duration-500 cursor-pointer hover:scale-105 hover:text-red-700">
+              <button @click="removeColumn(index)" class="ml-2 cursor-pointer text-red-500 transition duration-500 hover:scale-105 hover:text-red-700">
                 <i class="fas fa-trash" title="Remove column"></i>
               </button>
             </div>
@@ -268,30 +268,30 @@ onMounted(() => {
         <select v-model="newAssigneeId" id="newAssignee" class="w-full rounded border bg-gray-600 px-3 py-2 text-white">
           <option v-for="user in assignees" :key="user.id" :value="user.id" class="text-white">{{ user.name }}</option>
         </select>
-        <button @click="addAssignee" class="mt-2 rounded bg-blue-500 px-4 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-blue-700">Add Assignee</button>
+        <button @click="addAssignee" class="mt-2 cursor-pointer rounded bg-blue-500 px-4 py-2 text-white transition duration-500 hover:scale-105 hover:bg-blue-700">Add Assignee</button>
       </div>
       <div class="mb-4">
         <h3 class="mb-2 text-sm font-bold text-white">Assignees</h3>
         <ul>
           <li v-for="assignee in projectAssignees" :key="assignee.id" class="flex justify-between text-white">
             {{ assignee.name }}
-            <button v-if="assignee.id !== projectOwner.value" @click="removeAssignee(assignee.id)" class="text-red-500 transition duration-500 cursor-pointer hover:scale-105 hover:text-red-700">
+            <button v-if="assignee.id !== projectOwner.value" @click="removeAssignee(assignee.id)" class="cursor-pointer text-red-500 transition duration-500 hover:scale-105 hover:text-red-700">
               <i class="fas fa-trash" title="Remove assignee"></i>
             </button>
           </li>
         </ul>
       </div>
       <div class="flex space-x-2">
-        <button @click="showConfirmation = true" class="rounded bg-red-500 px-2 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-red-600">Delete Project</button>
-        <button @click="props.onClose" class="ml-auto rounded-xl text-background bg-[#40c27b] px-2 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-[#2f8f5a]">Done</button>
+        <button @click="showConfirmation = true" class="cursor-pointer rounded bg-red-500 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-red-600">Delete Project</button>
+        <button @click="props.onClose" class="text-background ml-auto cursor-pointer rounded-xl bg-[#40c27b] px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">Done</button>
       </div>
       <div v-if="showConfirmation" class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
         <div class="w-full max-w-md rounded bg-gray-600 p-6 shadow-md">
           <h2 class="mb-4 text-2xl font-bold text-white">Confirm Deletion</h2>
           <p class="mb-4 text-white">Are you sure you want to delete this project? This action cannot be undone.</p>
           <div class="flex justify-end space-x-2">
-            <button @click="removeProject" class="rounded bg-red-500 px-2 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-red-600">Delete</button>
-            <button @click="showConfirmation = false" class="rounded bg-gray-400 px-2 py-2 text-white transition duration-500 cursor-pointer hover:scale-105 hover:bg-gray-500">Cancel</button>
+            <button @click="removeProject" class="cursor-pointer rounded bg-red-500 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-red-600">Delete</button>
+            <button @click="showConfirmation = false" class="cursor-pointer rounded bg-gray-400 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-gray-500">Cancel</button>
           </div>
         </div>
       </div>

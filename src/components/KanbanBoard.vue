@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
               <div
                 v-for="task in column.expand.task"
                 :key="task.id"
-                class="min-h-30 relative cursor-pointer rounded-lg bg-gray-700 p-2 font-bold text-white hover:bg-gray-600"
+                class="min-h-30 relative cursor-pointer rounded-lg bg-gray-700 p-2 font-bold text-white transition duration-500 hover:scale-105"
                 @click="showTaskModal(task)"
               >
                 {{ task.name }}

@@ -81,7 +81,7 @@ onBeforeUnmount(() => {
       </li>
     </ul>
     <div class="mt-4">
-      <button @click="showCreateProjectModal = true" class="w-full rounded bg-[#40c27b] px-4 py-2 text-white hover:bg-[#2f8f5a]">Create New Project</button>
+      <button @click="showCreateProjectModal = true" class="hover:bg-[#2f8f5a]transition w-full cursor-pointer rounded bg-[#40c27b] px-4 py-2 text-white duration-500 hover:scale-105">Create New Project</button>
     </div>
     <CreateProjectModal v-if="showCreateProjectModal" :showModal="showCreateProjectModal" @projectCreated="handleProjectCreated" @close="() => showCreateProjectModal = false" />
   </div>

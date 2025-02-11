@@ -111,8 +111,8 @@ onMounted(() => {
         <textarea v-model="taskDescription" id="taskDescription" class="w-full rounded border px-3 py-2 text-white"></textarea>
       </div>
       <div class="flex justify-end space-x-2">
-        <button @click="addTask" class="rounded bg-[#40c27b] px-2 py-2 text-white hover:bg-[#2f8f5a]">Add Task</button>
-        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white hover:bg-gray-500">Cancel</button>
+        <button @click="addTask" class="cursor-pointer rounded bg-[#40c27b] px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-[#2f8f5a]">Add Task</button>
+        <button @click="props.onClose" class="cursor-pointer rounded bg-gray-400 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-gray-500">Cancel</button>
       </div>
     </div>
   </div>
