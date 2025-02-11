@@ -74,7 +74,7 @@ onBeforeUnmount(() => {
     </div>
     <template v-else>
       <div class="max-w-[calc(100vw)] space-x-4">
-        <div class="flex min-h-[calc(100vh-2rem)]" v-if="columns.length != 0">
+        <div class="flex min-h-[calc(100vh-2rem)] cursor-default" v-if="columns.length != 0">
           <div
             v-for="column in columns"
             :key="column.id"

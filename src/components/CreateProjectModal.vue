@@ -61,8 +61,8 @@ const createProject = async () => {
         <input v-model="projectName" type="text" id="projectName" class="w-full rounded border px-3 py-2 text-white" />
       </div>
       <div class="flex justify-end space-x-2">
-        <button @click="createProject" class="rounded bg-[#40c27b] px-2 py-2 text-white hover:bg-[#2f8f5a]">Create Project</button>
-        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white hover:bg-gray-500">Cancel</button>
+        <button @click="createProject" class="hover:bg-[#2f8f5a]hover:scale-105 rounded bg-[#40c27b] px-2 py-2 text-white transition duration-500 cursor-pointer">Create Project</button>
+        <button @click="props.onClose" class="rounded bg-gray-400 px-2 py-2 text-white transition duration-500 hover:scale-105 hover:bg-gray-500 cursor-pointer">Cancel</button>
       </div>
     </div>
   </div>
