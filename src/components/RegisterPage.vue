@@ -21,12 +21,10 @@ const register = async () => {
   }
 
   try {
-    // Fetch the default avatar file
     const response = await fetch(defaultAvatarUrl);
     const blob = await response.blob();
     const file = new File([blob], 'default-avatar.png', { type: blob.type });
 
-    // Create a FormData object
     const formData = new FormData();
     formData.append('name', name.value);
     formData.append('email', email.value);
@@ -34,7 +32,6 @@ const register = async () => {
     formData.append('passwordConfirm', password.value);
     formData.append('avatar', file);
 
-    // Create the user with the FormData object
     await pb.collection('users').create(formData);
     errorMessage.value = '';
     router.push('/login');
