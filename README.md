@@ -1,3 +1,3 @@
-#Tabica
+# Tabica
 
-Tabica is a Kanban board application.
+Tabica is a simple Kanban board application. It was the main subject of my Engineering degree thesis. 
